@@ -1,4 +1,3 @@
--- lua/plugins/snacks-dashboard.lua
 return {
   {
     "folke/snacks.nvim",
@@ -11,8 +10,8 @@ return {
           {
             pane = 2,
             section = "terminal",
-            cmd = "echo '                       │ ╲ ││\\n            Powered by ││╲╲││.\\n                       ││ ╲ │\\n                       neovim\\n─────────────────────────────────────────────\\n        Help poor children in Uganda!\\n type  :help Kuwasha<Enter>  for information'",
-            height = 7,
+            cmd = "echo '\\n                                │ ╲ ││\\n                     Powered by ││╲╲││.\\n                                ││ ╲ │\\n                                neovim\\n         ─────────────────────────────────────────────\\n                 Help poor children in Uganda!\\n          type  :help Kuwasha<Enter>  for information'",
+            height = 8,
             padding = 4,
           },
         },
