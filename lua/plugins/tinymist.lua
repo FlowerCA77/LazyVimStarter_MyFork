@@ -6,9 +6,10 @@ return {
             servers = {
                 tinymist = {
                     -- WARNING: notice that |lsp-root_dir| is
-                    -- lsp-root_dir: string | fun(bufnr: integer, on_dir: fun(root_dir?: string))
+                    --   lsp-root_dir: string | fun(bufnr: integer, on_dir: fun(root_dir?: string))
                     -- not
-                    -- lsp-root_dir: string | fun(fname: string)
+                    --   lsp-root_dir: string | fun(fname: string)
+                    -- it is suggested to use |lsp-root_markers| not |lsp-root_dir|
                     root_markers = { ".git", "typst.toml", "main.typ" },
                     single_file_support = true,
 
