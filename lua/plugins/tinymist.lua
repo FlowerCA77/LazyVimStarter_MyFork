@@ -3,6 +3,7 @@ return {
         "neovim/nvim-lspconfig",
         ---@class PluginLspOpts
         opts = {
+            ---@type lspconfig.settings.tinymist
             servers = {
                 tinymist = {
                     -- NOTE: notice that `lsp-root_dir` is
@@ -22,6 +23,20 @@ return {
                     },
 
                     on_attach = function(client, bufnr)
+                        local ok, wk = pcall(require, "which-key")
+
+                        if ok then
+                            wk.add({
+                                {
+                                    "<leader>t",
+                                    group = "tinymist pin main",
+                                    icon = "",
+                                },
+                                { "<leader>tp", icon = "" },
+                                { "<leader>tu", icon = "" },
+                            })
+                        end
+
                         vim.keymap.set("n", "<leader>tp", function()
                             client:exec_cmd({
                                 title = "pin",
