@@ -55,6 +55,7 @@ vim.keymap.set(
     "<C-o>gk",
     { silent = true, desc = "Move up screen line" }
 )
+
 vim.keymap.set(
     "i",
     "<Down>",

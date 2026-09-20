@@ -18,7 +18,7 @@ return {
                     settings = {
                         formatterMode = "typstyle",
                         formatterProseWrap = true,
-                        formatterPrintWidth = 120,
+                        formatterPrintWidth = 100,
                         formatterIndentSize = 4,
                     },
 
