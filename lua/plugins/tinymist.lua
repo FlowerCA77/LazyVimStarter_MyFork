@@ -1,6 +1,7 @@
 return {
     {
         "neovim/nvim-lspconfig",
+
         ---@class PluginLspOpts
         opts = {
             ---@type lspconfig.settings.tinymist
@@ -18,7 +19,7 @@ return {
                     settings = {
                         formatterMode = "typstyle",
                         formatterProseWrap = true,
-                        formatterPrintWidth = 100,
+                        formatterPrintWidth = 120,
                         formatterIndentSize = 4,
                     },
 
@@ -29,13 +30,18 @@ return {
                             wk.add({
                                 {
                                     "<leader>t",
-                                    group = "tinymist pin main",
+                                    group = "tinymist settings",
                                     icon = "",
                                 },
                                 { "<leader>tp", icon = "" },
                                 { "<leader>tu", icon = "" },
                             })
                         end
+
+                        vim.opt.tabstop = 4
+                        vim.opt.softtabstop = 4
+                        vim.opt.shiftwidth = 4
+                        vim.opt.expandtab = true
 
                         vim.keymap.set("n", "<leader>tp", function()
                             client:exec_cmd({
