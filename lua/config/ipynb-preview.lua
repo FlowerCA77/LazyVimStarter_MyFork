@@ -89,7 +89,6 @@ function M.preview()
     vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
 
     vim.bo.buftype = ""
-    vim.bo.filetype = "markdown"
     vim.bo.bufhidden = "hide"
     vim.bo.swapfile = false
 
@@ -98,6 +97,9 @@ function M.preview()
     vim.bo.modified = false
     vim.bo.modifiable = false
     vim.bo.readonly = true
+
+    vim.api.nvim_exec_autocmds("BufReadPre", { buffer = buf })
+    vim.bo.filetype = "markdown"
 end
 
 return M

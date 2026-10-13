@@ -149,10 +149,13 @@ vim.api.nvim_create_autocmd("BufReadCmd", {
             "-",
             vim.fn.expand("%"),
         })
+        local buf = vim.api.nvim_get_current_buf()
 
         vim.api.nvim_buf_set_lines(0, 0, -1, false, vim.split(out, "\n"))
-        vim.bo.filetype = "markdown"
         vim.bo.buftype = "nofile"
         vim.bo.bufhidden = "wipe"
+
+        vim.api.nvim_exec_autocmds("BufReadPre", { buffer = buf })
+        vim.bo.filetype = "markdown"
     end,
 })
