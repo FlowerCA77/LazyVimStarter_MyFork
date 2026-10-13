@@ -137,3 +137,22 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 })
 
 setup_spell_highlights()
+
+vim.api.nvim_create_autocmd("BufReadCmd", {
+    pattern = "*.ipynb",
+    callback = function()
+        local out = vim.fn.system({
+            "jupytext",
+            "--to",
+            "markdown",
+            "--output",
+            "-",
+            vim.fn.expand("%"),
+        })
+
+        vim.api.nvim_buf_set_lines(0, 0, -1, false, vim.split(out, "\n"))
+        vim.bo.filetype = "markdown"
+        vim.bo.buftype = "nofile"
+        vim.bo.bufhidden = "wipe"
+    end,
+})
