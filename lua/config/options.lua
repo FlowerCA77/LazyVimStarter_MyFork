@@ -8,3 +8,12 @@ opt.tabstop = 4
 opt.softtabstop = 4
 opt.shiftwidth = 4
 opt.expandtab = true
+
+vim.filetype.add({
+    extension = {
+        g = "gap",
+        gi = "gap",
+        gd = "gap",
+        tst = "gaptst",
+    },
+})

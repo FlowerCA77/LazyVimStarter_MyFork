@@ -72,6 +72,13 @@ vim.api.nvim_create_autocmd("FileType", {
     end,
 })
 
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "gap",
+    callback = function()
+        vim.o.commentstring = "#%s"
+    end,
+})
+
 local function resolve_hl(name, depth)
     depth = depth or 0
     if depth > 8 then

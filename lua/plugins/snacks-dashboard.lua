@@ -1,6 +1,8 @@
 return {
     {
         "folke/snacks.nvim",
+
+        ---@class snacks.dashboard.opts
         opts = {
             dashboard = {
                 sections = {
