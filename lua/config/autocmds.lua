@@ -74,25 +74,17 @@ vim.api.nvim_create_autocmd("FileType", {
 
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "gap",
-    callback = function()
-        vim.o.commentstring = "#%s"
-    end,
+    callback = function() vim.o.commentstring = "#%s" end,
 })
 
 local function resolve_hl(name, depth)
     depth = depth or 0
-    if depth > 8 then
-        return {}
-    end
+    if depth > 8 then return {} end
 
     local ok, hl = pcall(vim.api.nvim_get_hl, 0, { name = name })
-    if not ok or type(hl) ~= "table" then
-        return {}
-    end
+    if not ok or type(hl) ~= "table" then return {} end
 
-    if hl.link then
-        return resolve_hl(hl.link, depth + 1)
-    end
+    if hl.link then return resolve_hl(hl.link, depth + 1) end
 
     return hl
 end
@@ -112,43 +104,23 @@ local function setup_spell_highlights()
     ---@diagnostic disable-next-line: unused-local
     local comment_color = comment.fg or "#8b919a"
 
-    vim.api.nvim_set_hl(0, "SpellBad", {
-        underdashed = true,
-        sp = info_color,
-    })
+    vim.api.nvim_set_hl(0, "SpellBad", { underdashed = true, sp = info_color })
 
-    vim.api.nvim_set_hl(0, "SpellCap", {
-        underdotted = true,
-        fg = comment_color,
-    })
+    vim.api.nvim_set_hl(0, "SpellCap", { underdotted = true, fg = comment_color })
 
-    vim.api.nvim_set_hl(0, "SpellRare", {
-        fg = comment_color,
-    })
+    vim.api.nvim_set_hl(0, "SpellRare", { fg = comment_color })
 
-    vim.api.nvim_set_hl(0, "SpellLocal", {
-        fg = hint_color,
-    })
+    vim.api.nvim_set_hl(0, "SpellLocal", { fg = hint_color })
 end
 
-vim.api.nvim_create_autocmd("ColorScheme", {
-    pattern = "*",
-    callback = setup_spell_highlights,
-})
+vim.api.nvim_create_autocmd("ColorScheme", { pattern = "*", callback = setup_spell_highlights })
 
 setup_spell_highlights()
 
 vim.api.nvim_create_autocmd("BufReadCmd", {
     pattern = "*.ipynb",
     callback = function()
-        local out = vim.fn.system({
-            "jupytext",
-            "--to",
-            "markdown",
-            "--output",
-            "-",
-            vim.fn.expand("%"),
-        })
+        local out = vim.fn.system({ "jupytext", "--to", "markdown", "--output", "-", vim.fn.expand("%") })
         local buf = vim.api.nvim_get_current_buf()
 
         vim.api.nvim_buf_set_lines(0, 0, -1, false, vim.split(out, "\n"))
@@ -170,32 +142,21 @@ vim.api.nvim_create_autocmd("BufReadCmd", {
         local buf = args.buf
         local file = args.file
 
-        if vim.b[buf].snacks_image then
-            vim.b[buf].snacks_image = false
-        end
+        if vim.b[buf].snacks_image then vim.b[buf].snacks_image = false end
 
         vim.bo[buf].buftype = "nofile"
         vim.bo[buf].bufhidden = "hide"
         vim.bo[buf].swapfile = false
         vim.bo[buf].modifiable = true
 
-        local res = vim.system(
-            { "pdftotext", "-layout", "-enc", "UTF-8", file, "-" },
-            { text = true }
-        ):wait()
+        local res = vim.system({ "pdftotext", "-layout", "-enc", "UTF-8", file, "-" }, { text = true }):wait()
 
         local lines
         if res.code == 0 then
             lines = vim.split(res.stdout, "\n", { plain = true })
-            if lines[#lines] == "" then
-                lines[#lines] = nil
-            end
+            if lines[#lines] == "" then lines[#lines] = nil end
         else
-            lines = {
-                "pdftotext failed (exit " .. res.code .. "): " .. file,
-                "",
-                res.stderr or "",
-            }
+            lines = { "pdftotext failed (exit " .. res.code .. "): " .. file, "", res.stderr or "" }
         end
 
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
@@ -206,40 +167,27 @@ vim.api.nvim_create_autocmd("BufReadCmd", {
 })
 
 vim.api.nvim_create_autocmd("BufLeave", {
-    pattern = vim.iter(require("snacks.image").config.formats)
-        :map(function(ext)
-            return "*." .. ext
-        end)
-        :totable(),
+    pattern = vim.iter(require("snacks.image").config.formats):map(function(ext) return "*." .. ext end):totable(),
     callback = function(args)
         local function is_buf_displayed(buf)
             for _, win in ipairs(vim.api.nvim_list_wins()) do
-                if vim.api.nvim_win_get_buf(win) == buf then
-                    return true
-                end
+                if vim.api.nvim_win_get_buf(win) == buf then return true end
             end
             return false
         end
 
         vim.schedule(function()
             local b = args.buf
-            if not vim.api.nvim_buf_is_valid(b) then
-                return
-            end
-            if vim.api.nvim_get_current_buf() == b then
-                return
-            end
-            if is_buf_displayed(b) then
-                return
-            end
+            if not vim.api.nvim_buf_is_valid(b) then return end
+            if vim.api.nvim_get_current_buf() == b then return end
+            if is_buf_displayed(b) then return end
             pcall(vim.api.nvim_buf_delete, b, { force = true })
         end)
     end,
 })
 
 local bin_cache = {}
-local bin_detect_group =
-    vim.api.nvim_create_augroup("BinaryDetect", { clear = true })
+local bin_detect_group = vim.api.nvim_create_augroup("BinaryDetect", { clear = true })
 
 local magic_encoding
 
@@ -273,10 +221,7 @@ do
             if cookie ~= nil and lib.magic_load(cookie, nil) == 0 then
                 magic_encoding = function(head)
                     local p = lib.magic_buffer(cookie, head, #head)
-                    if p == nil then
-                        return head:find("\0", 1, true) and "binary"
-                            or "us-ascii"
-                    end
+                    if p == nil then return head:find("\0", 1, true) and "binary" or "us-ascii" end
                     return ffi.string(p)
                 end
             end
@@ -284,27 +229,19 @@ do
     end
 
     if not magic_encoding then
-        magic_encoding = function(head)
-            return head:find("\0", 1, true) and "binary" or "us-ascii"
-        end
+        magic_encoding = function(head) return head:find("\0", 1, true) and "binary" or "us-ascii" end
     end
 end
 
 local function bin_sniff(path)
     local stat = vim.uv.fs_stat(path)
-    if not stat or stat.size == 0 then
-        return false
-    end
+    if not stat or stat.size == 0 then return false end
 
     local hit = bin_cache[path]
-    if hit ~= nil then
-        return hit
-    end
+    if hit ~= nil then return hit end
 
     local fd = vim.uv.fs_open(path, "r", 438)
-    if not fd then
-        return false
-    end
+    if not fd then return false end
     local head = vim.uv.fs_read(fd, 8192, 0) or ""
     vim.uv.fs_close(fd)
 
@@ -317,18 +254,12 @@ vim.api.nvim_create_autocmd("BufReadPre", {
     group = bin_detect_group,
     callback = function(args)
         local path = vim.api.nvim_buf_get_name(args.buf)
-        if path == "" or vim.fn.filereadable(path) == 0 then
-            return
-        end
+        if path == "" or vim.fn.filereadable(path) == 0 then return end
 
         local stat = vim.uv.fs_stat(path)
-        if not stat or stat.size == 0 then
-            return
-        end
+        if not stat or stat.size == 0 then return end
 
-        if bin_sniff(path) then
-            vim.bo[args.buf].filetype = "binary"
-        end
+        if bin_sniff(path) then vim.bo[args.buf].filetype = "binary" end
     end,
 })
 

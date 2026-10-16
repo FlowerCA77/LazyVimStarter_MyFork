@@ -3,15 +3,11 @@ local M = {}
 local function find_nbconvert()
     for _, name in ipairs({ "jupyter-nbconvert", "nbconvert" }) do
         local p = vim.fn.exepath(name)
-        if p ~= "" and vim.fn.executable(p) == 1 then
-            return p
-        end
+        if p ~= "" and vim.fn.executable(p) == 1 then return p end
     end
     for _, name in ipairs({ "jupyter-nbconvert", "nbconvert" }) do
         local fb = vim.fn.expand("~/.local/bin/" .. name)
-        if vim.fn.executable(fb) == 1 then
-            return fb
-        end
+        if vim.fn.executable(fb) == 1 then return fb end
     end
     return nil
 end
@@ -25,10 +21,7 @@ function M.preview()
 
     local nbconvert = find_nbconvert()
     if nbconvert == nil then
-        vim.notify(
-            "cannot find jupyter-nbconvert / nbconvert",
-            vim.log.levels.ERROR
-        )
+        vim.notify("cannot find jupyter-nbconvert / nbconvert", vim.log.levels.ERROR)
         return
     end
 
@@ -44,11 +37,7 @@ function M.preview()
     )
     if outdir == nil then
         vim.notify(
-            string.format(
-                "cannot create tmpdir: %s (%s)",
-                tostring(err),
-                tostring(err_name)
-            ),
+            string.format("cannot create tmpdir: %s (%s)", tostring(err), tostring(err_name)),
             vim.log.levels.ERROR
         )
         return
@@ -76,9 +65,7 @@ function M.preview()
     local lines = vim.fn.readfile(md_path)
     for i, line in ipairs(lines) do
         lines[i] = line:gsub("%]%(([^)]+)%)", function(p)
-            if p:match("^/") or p:match("^%a[%w+.-]*://") then
-                return "](" .. p .. ")"
-            end
+            if p:match("^/") or p:match("^%a[%w+.-]*://") then return "](" .. p .. ")" end
             return "](" .. outdir .. "/" .. p .. ")"
         end)
     end

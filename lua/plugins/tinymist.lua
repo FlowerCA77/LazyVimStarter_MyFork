@@ -28,11 +28,7 @@ return {
 
                         if ok then
                             wk.add({
-                                {
-                                    "<leader>t",
-                                    group = "tinymist settings",
-                                    icon = "",
-                                },
+                                { "<leader>t", group = "tinymist settings", icon = "" },
                                 { "<leader>tp", icon = "" },
                                 { "<leader>tu", icon = "" },
                             })
@@ -43,27 +39,33 @@ return {
                         vim.opt.shiftwidth = 4
                         vim.opt.expandtab = true
 
-                        vim.keymap.set("n", "<leader>tp", function()
-                            client:exec_cmd({
-                                title = "pin",
-                                command = "tinymist.pinMain",
-                                arguments = { vim.api.nvim_buf_get_name(0) },
-                            }, { bufnr = bufnr })
-                        end, {
-                            desc = "[T]inymist [P]in",
-                            noremap = true,
-                        })
+                        vim.keymap.set(
+                            "n",
+                            "<leader>tp",
+                            function()
+                                client:exec_cmd({
+                                    title = "pin",
+                                    command = "tinymist.pinMain",
+                                    arguments = { vim.api.nvim_buf_get_name(0) },
+                                }, { bufnr = bufnr })
+                            end,
+                            {
+                                desc = "[T]inymist [P]in",
+                                noremap = true,
+                            }
+                        )
 
-                        vim.keymap.set("n", "<leader>tu", function()
-                            client:exec_cmd({
-                                title = "unpin",
-                                command = "tinymist.pinMain",
-                                arguments = { vim.v.null },
-                            }, { bufnr = bufnr })
-                        end, {
-                            desc = "[T]inymist [U]npin",
-                            noremap = true,
-                        })
+                        vim.keymap.set(
+                            "n",
+                            "<leader>tu",
+                            function()
+                                client:exec_cmd(
+                                    { title = "unpin", command = "tinymist.pinMain", arguments = { vim.v.null } },
+                                    { bufnr = bufnr }
+                                )
+                            end,
+                            { desc = "[T]inymist [U]npin", noremap = true }
+                        )
                     end,
                 },
             },

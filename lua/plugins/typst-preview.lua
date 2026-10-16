@@ -6,8 +6,6 @@ return {
 
         opts = {}, -- lazy.nvim will implicitly calls `setup {}`
 
-        keys = {
-            { "<leader>tP", "<cmd>TypstPreview<CR>", desc = "Typst Preview" },
-        },
+        keys = { { "<leader>tP", "<cmd>TypstPreview<CR>", desc = "Typst Preview" } },
     },
 }
