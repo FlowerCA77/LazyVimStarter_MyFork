@@ -266,8 +266,51 @@ vim.api.nvim_create_autocmd("BufReadPre", {
 vim.api.nvim_create_autocmd("FileType", {
     group = bin_detect_group,
     pattern = "binary",
+
     callback = function(args)
-        vim.bo[args.buf].readonly = true
-        vim.bo[args.buf].modifiable = false
+        local buf = args.buf
+        if vim.b[buf].hex_inited then return end
+        vim.b[buf].hex_inited = true
+
+        vim.schedule(function()
+            if not vim.api.nvim_buf_is_valid(buf) then return end
+
+            vim.bo[buf].modifiable = true
+
+            vim.cmd("silent! %!xxd -g 1 -u -c 16")
+
+            vim.bo[buf].filetype = "xxd"
+
+            vim.bo[buf].modified = false
+            vim.b[buf].hex_mode = true
+            vim.bo[buf].readonly = true
+            vim.bo[buf].modifiable = false
+        end)
     end,
 })
+
+vim.api.nvim_create_user_command("HexToggle", function()
+    local buf = vim.api.nvim_get_current_buf()
+    if not vim.b[buf].hex_inited then
+        vim.notify("Not a binary buffer", vim.log.levels.WARN)
+        return
+    end
+
+    vim.bo[buf].modifiable = true
+
+    if vim.b[buf].hex_mode then
+        vim.cmd("silent! %!xxd -r")
+        vim.bo[buf].filetype = "binary"
+        vim.b[buf].hex_mode = false
+    else
+        vim.cmd("silent! %!xxd -g 1 -u -c 16")
+        vim.bo[buf].filetype = "xxd"
+        vim.b[buf].hex_mode = true
+    end
+
+    vim.bo[buf].modified = false
+    vim.bo[buf].readonly = true
+    vim.bo[buf].modifiable = false
+end, {})
+
+vim.keymap.set("n", "<leader>uH", "<cmd>HexToggle<cr>", { desc = "Toggle hex view" })
