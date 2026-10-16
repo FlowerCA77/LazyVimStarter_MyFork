@@ -13,7 +13,7 @@ return {
 
             image_cfg.enabled = true
 
-            image_cfg.doc.inline = false
+            image_cfg.doc.enabled = false
             image_cfg.math.enabled = false
 
             opts.image = image_cfg
