@@ -3,18 +3,41 @@ return {
         "folke/snacks.nvim",
 
         opts = function(_, opts)
-            local image_cfg = require("snacks.image").config or {}
+            opts.image = opts.image or {}
 
-            if image_cfg.formats then
-                image_cfg.formats = vim.tbl_filter(function(f) return f ~= "pdf" end, image_cfg.formats)
+            opts.image.enabled = true
+            opts.image.doc = opts.image.doc or {}
+            opts.image.doc.enabled = true
+            opts.image.doc.inline = true
+
+            opts.image.math = opts.image.math or {}
+            opts.image.math.enabled = false
+
+            local current_formats = opts.image.formats
+                or {
+                    "png",
+                    "jpg",
+                    "jpeg",
+                    "gif",
+                    "bmp",
+                    "webp",
+                    "tiff",
+                    "heic",
+                    "avif",
+                    "mp4",
+                    "mov",
+                    "avi",
+                    "mkv",
+                    "webm",
+                    "pdf",
+                    "icns",
+                }
+            local new_formats = {}
+            for _, ext in ipairs(current_formats) do
+                if ext ~= "pdf" then new_formats[#new_formats + 1] = ext end
             end
+            opts.image.formats = new_formats
 
-            image_cfg.enabled = true
-
-            image_cfg.doc.enabled = true
-            image_cfg.math.enabled = false
-
-            opts.image = image_cfg
             return opts
         end,
     },

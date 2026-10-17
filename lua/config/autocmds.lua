@@ -12,9 +12,9 @@ pcall(vim.api.nvim_del_augroup_by_name, "lazyvim_wrap")
 
 require("config.autocmds.texthl").config()
 require("config.autocmds.pdfastext").config()
+require("config.autocmds.snacksimage_destroyer").config()
 require("config.autocmds.binary").config()
 require("config.autocmds.disassembly.disassembly").config()
-require("config.autocmds.snacksimage_destroyer").config()
 require("config.autocmds.luaexec").config()
 
 -- In Rust code, disable the automatic matching of single quotes to prevent confusion with lifetime markers.
@@ -57,26 +57,5 @@ vim.api.nvim_create_autocmd("BufReadCmd", {
 
         vim.api.nvim_exec_autocmds("BufReadPre", { buffer = buf })
         vim.bo.filetype = "markdown"
-    end,
-})
-
--- When pure-image buffer leave, destroy it and close it.
-vim.api.nvim_create_autocmd("BufLeave", {
-    pattern = vim.iter(require("snacks.image").config.formats):map(function(ext) return "*." .. ext end):totable(),
-    callback = function(args)
-        local function is_buf_displayed(buf)
-            for _, win in ipairs(vim.api.nvim_list_wins()) do
-                if vim.api.nvim_win_get_buf(win) == buf then return true end
-            end
-            return false
-        end
-
-        vim.schedule(function()
-            local b = args.buf
-            if not vim.api.nvim_buf_is_valid(b) then return end
-            if vim.api.nvim_get_current_buf() == b then return end
-            if is_buf_displayed(b) then return end
-            pcall(vim.api.nvim_buf_delete, b, { force = true })
-        end)
     end,
 })

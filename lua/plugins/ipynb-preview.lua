@@ -80,7 +80,7 @@ local function preview()
     vim.bo.bufhidden = "hide"
     vim.bo.swapfile = false
 
-    vim.api.nvim_buf_set_name(buf, "ipynb://" .. "/" .. stem)
+    vim.api.nvim_buf_set_name(buf, "ipynb://" .. "/" .. outdir .. stem)
 
     vim.bo.modified = false
     vim.bo.modifiable = false

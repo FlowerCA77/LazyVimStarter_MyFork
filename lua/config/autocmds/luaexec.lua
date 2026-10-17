@@ -108,10 +108,10 @@ local function open_luaexec()
     local sandbox = setmetatable({}, { __index = _G })
 
     local function apply_last_code(action)
-        if not last_code then return end
+        if not M.last_code then return end
 
         local current_lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-        local last_lines = vim.split(last_code, "\n")
+        local last_lines = vim.split(M.last_code, "\n")
         local new_lines = {}
 
         if action == "Replace" then
@@ -125,7 +125,7 @@ local function open_luaexec()
             if #current_lines > 0 and current_lines[#current_lines] ~= "" then vim.list_extend(new_lines, { "" }) end
             vim.list_extend(new_lines, last_lines)
         elseif action == "Copy" then
-            pcall(vim.fn.setreg, "+", last_code)
+            pcall(vim.fn.setreg, "+", M.last_code)
             vim.notify("Copied last command to clipboard", vim.log.levels.INFO)
             return
         end
@@ -158,7 +158,7 @@ local function open_luaexec()
     end
 
     vim.keymap.set({ "n", "i" }, "<Up>", function()
-        if vim.api.nvim_win_get_cursor(win)[1] == 1 and last_code and last_code ~= "" then
+        if vim.api.nvim_win_get_cursor(win)[1] == 1 and M.last_code and M.last_code ~= "" then
             vim.ui.select(
                 { "Replace", "Prepend", "Append", "Copy" },
                 { prompt = "Apply last successful command as:" },
@@ -198,7 +198,7 @@ local function open_luaexec()
 
         local ok, runtime_err = pcall(chunk)
         if ok then
-            if code:match("%S") then last_code = code end
+            if code:match("%S") then M.last_code = code end
             vim.bo[buf].modifiable = true
             vim.api.nvim_buf_set_lines(buf, 0, -1, false, {})
             vim.bo[buf].modified = false
