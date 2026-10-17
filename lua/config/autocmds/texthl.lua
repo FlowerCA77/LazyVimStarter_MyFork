@@ -1,0 +1,87 @@
+local M = {}
+
+local function resolve_hl(name, depth)
+    depth = depth or 0
+    if depth > 8 then return {} end
+
+    local ok, hl = pcall(vim.api.nvim_get_hl, 0, { name = name })
+    if not ok or type(hl) ~= "table" then return {} end
+
+    if hl.link then return resolve_hl(hl.link, depth + 1) end
+
+    return hl
+end
+
+local function setup_spell_highlights()
+    local info = resolve_hl("DiagnosticInfo")
+    local warn = resolve_hl("DiagnosticWarn")
+    local hint = resolve_hl("DiagnosticHint")
+    local comment = resolve_hl("Comment")
+
+    ---@diagnostic disable-next-line: unused-local
+    local info_color = info.sp or info.fg or "#7aa2f7"
+    ---@diagnostic disable-next-line: unused-local
+    local warn_color = warn.sp or warn.fg or "#e0af68"
+    ---@diagnostic disable-next-line: unused-local
+    local hint_color = hint.sp or hint.fg or "#7dcfff"
+    ---@diagnostic disable-next-line: unused-local
+    local comment_color = comment.fg or "#8b919a"
+
+    vim.api.nvim_set_hl(0, "SpellBad", { underdashed = true, sp = info_color })
+
+    vim.api.nvim_set_hl(0, "SpellCap", { underdotted = true, fg = comment_color })
+
+    vim.api.nvim_set_hl(0, "SpellRare", { fg = comment_color })
+
+    vim.api.nvim_set_hl(0, "SpellLocal", { fg = hint_color })
+end
+
+function M.config()
+    vim.api.nvim_create_autocmd("FileType", {
+        group = vim.api.nvim_create_augroup("user_wrap", { clear = true }),
+        pattern = {
+            "text",
+            "plaintex",
+            "typst",
+            "latex",
+            "tex",
+            "gitcommit",
+            "markdown",
+            "yaml",
+            "toml",
+            "json",
+            "jsonc",
+            "ini",
+            "conf",
+            "lua",
+        },
+        callback = function()
+            vim.opt_local.wrap = true
+            vim.opt_local.linebreak = true
+            vim.opt_local.breakindent = true
+        end,
+    })
+
+    vim.api.nvim_create_autocmd("FileType", {
+        group = vim.api.nvim_create_augroup("user_spell", { clear = true }),
+        pattern = {
+            "text",
+            "plaintex",
+            "typst",
+            "latex",
+            "tex",
+            "gitcommit",
+            "markdown",
+        },
+        callback = function()
+            vim.opt_local.spell = true
+            vim.opt_local.spelllang = { "en", "cjk" }
+        end,
+    })
+
+    vim.api.nvim_create_autocmd("ColorScheme", { pattern = "*", callback = setup_spell_highlights })
+
+    setup_spell_highlights()
+end
+
+return M
