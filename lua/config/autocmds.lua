@@ -14,6 +14,7 @@ require("config.autocmds.texthl").config()
 require("config.autocmds.pdfastext").config()
 require("config.autocmds.binary").config()
 require("config.autocmds.disassembly.disassembly").config()
+require("config.autocmds.luaexec").config()
 
 -- In Rust code, disable the automatic matching of single quotes to prevent confusion with lifetime markers.
 vim.api.nvim_create_autocmd("FileType", {
