@@ -4,7 +4,6 @@ return {
 
         ---@class PluginLspOpts
         opts = {
-            ---@type lspconfig.settings.tinymist
             servers = {
                 tinymist = {
                     -- NOTE: notice that `lsp-root_dir` is
@@ -16,6 +15,7 @@ return {
                     root_markers = { ".git", "typst.toml", "main.typ" },
                     single_file_support = true,
 
+                    ---@type lspconfig.settings.tinymist
                     settings = {
                         formatterMode = "typstyle",
                         formatterProseWrap = true,
